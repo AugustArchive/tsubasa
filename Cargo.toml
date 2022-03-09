@@ -1,0 +1,27 @@
+[package]
+name = "tsubasa"
+version = "0.0.0" # check `version.json` for the current version
+edition = "2021"
+authors = ["Noel <cutie@floofy.dev>"]
+
+[dependencies]
+fern = "0.6.0"
+tokio = { version = "1.17.0", features = ["full"] }
+tokio-cron-scheduler = "0.5.0"
+log = "0.4.14"
+etcd-client = "0.8.4"
+serde = "1.0.136"
+toml = "0.5.8"
+rocket = { version = "0.5.0-rc.1", default-features = false, features = ["json"] }
+libc = { version = "0.2", default-features = false }
+meilisearch-sdk = "0.15.0"
+opensearch = "1.0.0"
+elasticsearch = "7.14.0-alpha.1"
+ansi_term = "*"
+chrono = "*"
+backtrace = "0.3.64"
+once_cell = "1.10.0"
+
+[[bin]]
+name = "tsubasa"
+path = "src/main.rs"
