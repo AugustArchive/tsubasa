@@ -39,7 +39,7 @@ LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 # Install needed dependencies
 WORKDIR /app/noel/tsubasa
-RUN apk update && apk add --no-cache build-base openssl
+RUN apk update && apk add --no-cache build-base openssl bash
 COPY docker /app/noel/tsubasa/scripts
 COPY --from=builder /build/tsubasa/target/release/tsubasa .
 
