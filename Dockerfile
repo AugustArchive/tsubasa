@@ -10,7 +10,7 @@ COPY Cargo.toml .
 RUN echo "fn main() {}" >> dummy.rs
 RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
 ENV RUSTFLAGS=-Ctarget-feature=-crt-static
-RUN cargo build --release
+RUN CARGO_INCREMENTAL=1 cargo build --release
 RUN rm dummy.rs && sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
 
 # Now we build the actual server
