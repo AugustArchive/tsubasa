@@ -20,8 +20,23 @@ use std::{env::var, fs};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
+    pub debug: bool,
+    pub http: Option<HttpConfig>,
+    pub elastic: ElasticConfig,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct HttpConfig {
     pub port: Option<i32>,
     pub host: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ElasticConfig {
+    pub endpoint: String,
+    pub username: Option<String>,
+    pub password: Option<String>,
+    pub indexes: Option<Vec<String>>,
 }
 
 static INSTANCE: OnceCell<Config> = OnceCell::new();
@@ -67,6 +82,15 @@ impl Config {
                 toml::from_str(&contents).expect("cannot serialize `Config` from path");
 
             INSTANCE.set(result).expect("unable to set global config");
+        }
+    }
+}
+
+impl Default for HttpConfig {
+    fn default() -> Self {
+        Self {
+            port: Some(23145),
+            host: Some("0.0.0.0".to_string()),
         }
     }
 }

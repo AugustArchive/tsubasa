@@ -15,21 +15,29 @@
 
 #![feature(path_try_exists)]
 
+#[macro_use]
+extern crate rocket;
+
+#[macro_use]
+extern crate log;
+
+use crate::elastic::Elasticsearch;
+use crate::routing::*;
 use crate::signals::add_signals;
 use ansi_term::Colour::RGB;
 use chrono::Local;
-use config::Config;
+use config::{Config, HttpConfig};
 use fern::Dispatch;
 use panic::setup_panic_handler;
+use rocket_prometheus::PrometheusMetrics;
 use std::env::var;
 use std::thread::current;
 
 mod config;
-mod etcd;
+mod elastic;
 mod panic;
 mod routing;
 mod signals;
-mod tql;
 
 type Result<T> = std::result::Result<T, rocket::Error>;
 
@@ -39,22 +47,46 @@ async fn main() -> Result<()> {
         add_signals();
     }
 
-    // setup logging
-    setup_logging();
-
-    // setup config
     Config::new();
     let config = Config::get();
+
+    // setup logging
+    setup_logging(config);
 
     // setup panic handler
     setup_panic_handler();
 
+    // setup elasticsearch
+    info!("setting up elasticsearch...");
+
+    Elasticsearch::new();
+    let elastic = Elasticsearch::get();
+    elastic
+        .test_connection()
+        .await
+        .expect("Unable to test Elasticsearch connection");
+
+    let default_http = HttpConfig::default();
+    let http_config = config.http.as_ref().unwrap_or(&default_http);
+
     // setup rocket config
-    let figment = rocket::Config::figment().merge(("port", config.port.unwrap_or(2314)));
-    rocket::custom(figment).launch().await
+    let figment = rocket::Config::figment()
+        .merge(("port", http_config.port.unwrap_or(23145)))
+        .merge((
+            "host",
+            http_config.host.as_ref().unwrap_or(&"0.0.0.0".to_string()),
+        ));
+
+    let metrics = PrometheusMetrics::with_default_registry();
+    let server = rocket::custom(figment)
+        .attach(metrics.clone())
+        .mount("/", routes![hello, health])
+        .mount("/metrics", metrics);
+
+    server.launch().await
 }
 
-fn setup_logging() {
+fn setup_logging(config: &'static Config) {
     let dispatch = Dispatch::new()
         .format(|out, message, record| {
             // If `TSUBASA_DISABLE_COLORS` is enabled as an environment variable
@@ -98,9 +130,16 @@ fn setup_logging() {
         })
         // turn off rocket-related stuff
         .level_for("_", log::LevelFilter::Off)
-        .level_for("rocket::launch_", log::LevelFilter::Off)
+        // .level_for("rocket::launch_", log::LevelFilter::Off)
         .level_for("rocket::shield", log::LevelFilter::Off)
         .level_for("mio::poll", log::LevelFilter::Off)
+        .level_for("want", log::LevelFilter::Off)
+        .level_for("tokio_util::codec::framed_impl", log::LevelFilter::Off)
+        .level(if config.debug {
+            log::LevelFilter::Debug
+        } else {
+            log::LevelFilter::Info
+        })
         .chain(std::io::stdout());
 
     if let Err(err) = dispatch.apply() {

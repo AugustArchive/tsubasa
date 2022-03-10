@@ -1,109 +1,9 @@
 # 🐇 Tsubasa
-> *Tiny microservice to define a schema and then be executed by any search engine you wish to use, like Elasticsearch, Meilisearch, or OpenSearch!*
+> *Tiny, and simple Elasticsearch microservice to abstract searching objects!*
 
 ## Why did you build this?
-I built this as a way to define multiple schemas from many projects I create that should be reliable
-on indexing and searching without doing it myself. This is a HTTP **service** that is like GraphQL but for
-search engines like **Elasticsearch**!
-
-A schema is defined using the **TQL** (tsubasa query language):
-
-```tql
-schema(name: "some_name") {
-  define {
-    field("user_id", INT);
-  }
-}
-```
-
-This will generate the following in JSON:
-```json
-{
-  "version": 1,
-  "schema": {
-    "name": "some_name",
-    "engine": "elastic",
-    "definitions": [
-      {
-        "key": "field",
-        "name": "user_id",
-        "data_type": "INT",
-        "extra_metadata": null
-      }
-    ]
-  }
-}
-```
-
-You can also create custom data types that live on the server, i.e:
-
-```tql
-createDataType(name: "SOME_DATA_TYPE", raw_type: STRING)
-```
-
-Which will generate the following in JSON:
-```json
-{
-  "version": 1,
-  "executor": "createDataType",
-  "metadata": {
-    "name": "SOME_DATA_TYPE",
-    "raw_type": "STRING"
-  }
-}
-```
-
-Now we created a custom data type (optional) and created a schema, now we can test it!
-
-**Tsubasa** will do daily checks on the connection of Elasticsearch, Meilisearch, and OpenSearch
-and will report any errors that might have occured when retrieving the status of the engine itself.
-
-If any Elasticsearch or OpenSearch node fails or if Meilisearch cannot be reached, you will always get the following data payload with the **503 Service Unavailable** status code:
-
-```js
-{
-  "success": false,
-  "errors": [
-    {
-      "code": "ENGINE_UNAVAILABLE",
-      "message": "Elasticsearch node(s) [...node list] has failed."
-      
-      // If we are in development, we can retrieve the stack that
-      // Tsubasa has retrieved:
-      "response": {
-        "status_code": 400,
-        "data": {
-          [...]
-        }
-      }
-    }
-  ]
-}
-```
-
-Now, to test the schema, we just need to point to `<tsubasa-server>/execute`:
-
-```json
-{
-  "query": "search(match_type: FUZZINESS, item: \"...\") { use what field is available! }"
-}
-```
-
-And you should get a result back, if succeeded:
-
-```js
-{
-  "success": true,
-  "data": {
-    "took": 50, // in milliseconds
-    "data": [
-      {
-        "user_id": "..."
-      }
-    ]
-  }
-}
-```
+**Tsubasa** was built to be a simple abstraction to not use the official SDKs to search objects within an
+Elasticsearch index, so this is just a simple way to retrieve data from it.
 
 ## Installation
 Sweet, you want to use **Tsubasa** for your own use cases! You can install the **Tsubasa** server:
@@ -137,8 +37,7 @@ Now, you should be able to just run **tsubasa** on a single command:
 $ helm install <my-release> noel/tsubasa
 ```
 
-...and the server should be running now. The helm chart assumes you installed **etcd** and the search engine
-of your choice, we do not wanna bring unnecessary **etcd** instances.
+...and the server should be running now. The helm chart assumes you installed an Elasticsearch cluster installed.
 
 ### Docker Image
 You can use the official Docker images on [ghcr.io](https://github.com/auguwu/tsubasa/pkgs/containers/tsubasa) or on [Docker Hub](https://hub.docker.com/r/auguwu/tsubasa)!

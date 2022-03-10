@@ -13,8 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod main;
-mod result;
-mod schema;
-mod search;
-mod status_codes;
+use rocket::serde::json::{serde_json::json, Value};
+
+#[get("/")]
+pub fn hello() -> Value {
+    json!({
+        "success": true,
+        "message": "hello world!"
+    })
+}
+
+#[get("/health")]
+pub fn health() -> &'static str {
+    "OK"
+}
