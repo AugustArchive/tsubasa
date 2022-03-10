@@ -57,8 +57,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          # cache-from: type=local,src=/tmp/.buildx/cache
-          # cache-to: type=local,src=/tmp/.buildx/cache
+          cache-from: type=local,src=/tmp/.buildx/cache
+          cache-to: type=local,dest=/tmp/.buildx/cache
           tags: |
             auguwu/tsubasa:latest
             auguwu/tsubasa:latest-amd64
@@ -76,8 +76,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/arm64
           push: true
-          # cache-from: type=local,src=/tmp/.buildx/cache
-          # cache-to: type=local,src=/tmp/.buildx/cache
+          cache-from: type=local,src=/tmp/.buildx/cache
+          cache-to: type=local,dest=/tmp/.buildx/cache
           tags: |
             auguwu/tsubasa:latest-arm64
             auguwu/tsubasa:${{steps.tag.outputs.tag}}-arm64
