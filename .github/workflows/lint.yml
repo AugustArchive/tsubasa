@@ -1,0 +1,40 @@
+name: Clippy and rustfmt
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'issue/gh-**'
+      - master
+
+    paths-ignore:
+      - '.github/**'
+      - 'docker/**'
+      - 'scripts/**'
+      - '.dockerignore'
+      - '.gitignore'
+      - '**.md'
+      - 'LICENSE'
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Check for compile errors
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+
+      - name: Run linter with Clippy
+        run: cargo clippy --fix
+
+      - name: Run formatter with `rustfmt`
+        run: cargo fmt --all -- --check

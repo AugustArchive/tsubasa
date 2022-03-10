@@ -28,14 +28,12 @@ use ansi_term::Colour::RGB;
 use chrono::Local;
 use config::{Config, HttpConfig};
 use fern::Dispatch;
-use panic::setup_panic_handler;
 use rocket_prometheus::PrometheusMetrics;
 use std::env::var;
 use std::thread::current;
 
 mod config;
 mod elastic;
-mod panic;
 mod routing;
 mod signals;
 
@@ -47,19 +45,16 @@ async fn main() -> Result<()> {
         add_signals();
     }
 
-    Config::new();
+    Config::create();
     let config = Config::get();
 
     // setup logging
     setup_logging(config);
 
-    // setup panic handler
-    setup_panic_handler();
-
     // setup elasticsearch
     info!("setting up elasticsearch...");
 
-    Elasticsearch::new();
+    Elasticsearch::create();
     let elastic = Elasticsearch::get();
     elastic
         .test_connection()
@@ -81,6 +76,7 @@ async fn main() -> Result<()> {
     let server = rocket::custom(figment)
         .attach(metrics.clone())
         .mount("/", routes![hello, health])
+        .mount("/index", routes![index_get, index_fetch, index_search])
         .mount("/metrics", metrics);
 
     server.launch().await
@@ -93,12 +89,9 @@ fn setup_logging(config: &'static Config) {
             // then it will not output colours.
 
             let thread = current();
-            let name = match thread.name() {
-                Some(s) => s,
-                None => "main",
-            };
+            let name = thread.name().unwrap_or("main");
 
-            if let Ok(_) = var("TSUBASA_DISABLE_COLORS") {
+            if var("TSUBASA_DISABLE_COLORS").is_ok() {
                 out.finish(format_args!(
                     "{} [{} <{}>] {} :: {}",
                     Local::now().format("[%B %d, %G | %H:%M:%S %p]"),

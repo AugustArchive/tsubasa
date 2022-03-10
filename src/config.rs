@@ -46,14 +46,13 @@ impl Config {
         INSTANCE.get().expect("Unable to retrieve global config")
     }
 
-    pub fn new() {
+    pub fn create() {
         // Check if we can retrieve the `TSUBASA_CONFIG_PATH` path
         let env_path = var("TSUBASA_CONFIG_PATH");
         let root_path = fs::try_exists("./config.toml");
 
-        if env_path.is_ok() {
-            let path = env_path.unwrap();
-            debug!("found config path in `TSUBASA_CONFIG_PATH` env variable: '{}', now loading from that file...", path);
+        if let Ok(path) = env_path {
+            debug!("found config path in `TSUBASA_CONFIG_PATH` env variable: '{:?}', now loading from that file...", path);
 
             let contents =
                 fs::read_to_string(path).expect("unable to read from TSUBASA_CONFIG_PATH");
