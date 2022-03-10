@@ -76,7 +76,6 @@ jobs:
           # cache-to: type=local,src=/tmp/.buildx/cache
           tags: |
             auguwu/tsubasa:latest-arm64
-            auguwu/tsubasa:${{steps.tag.outputs.tag}}
             auguwu/tsubasa:${{steps.tag.outputs.tag}}-arm64
 
   deploy:
