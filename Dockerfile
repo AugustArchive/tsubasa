@@ -2,20 +2,21 @@ FROM rustlang/rust:nightly-alpine3.15 AS builder
 
 # why is rust like this
 # source: https://github.com/Benricheson101/anti-phishing-bot/blob/single_server/Dockerfile
-RUN apk update && apk add --no-cache build-base openssl-dev gcompat libc6-compat
+RUN apk update && apk add --no-cache build-base openssl-dev gcompat libc6-compat bash
 WORKDIR /build/tsubasa
 
 # This basically builds all the dependencies that Tsubasa requires
 COPY Cargo.toml .
+COPY docker/prebuild .
 RUN echo "fn main() {}" >> dummy.rs
 RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
 ENV RUSTFLAGS=-Ctarget-feature=-crt-static
-RUN CARGO_INCREMENTAL=1 cargo build --release
+RUN if [[ $(uname -m) =~ ^arm ]]; then CARGO_INCREMENTAL=1 cargo build --release --target aarch64-unknown-linux-musl; else CARGO_INCREMENTAL=1 cargo build --release; fi
 RUN rm dummy.rs && sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
 
 # Now we build the actual server
 COPY . .
-RUN cargo build --release
+RUN CARGO_INCREMENTAL=1 cargo build --release
 
 # This is the main thing that will be ran, multi-stage builds ftw!
 FROM alpine:3.15
