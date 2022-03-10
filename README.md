@@ -6,6 +6,8 @@
 Elasticsearch index, so this is just a simple way to retrieve data from it.
 
 ## Installation
+> :warning: **Tsubasa is alpha software, it is NOT production ready! Beware~ >!<**
+
 Sweet, you want to use **Tsubasa** for your own use cases! You can install the **Tsubasa** server:
 
 - using the [**Noelware Helm Charts**](#helm-chart);
