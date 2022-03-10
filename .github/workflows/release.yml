@@ -64,6 +64,10 @@ jobs:
             auguwu/tsubasa:latest-amd64
             auguwu/tsubasa:${{steps.tag.outputs.tag}}
             auguwu/tsubasa:${{steps.tag.outputs.tag}}-amd64
+            ghcr.io/auguwu/tsubasa:latest
+            ghcr.io/auguwu/tsubasa:latest-amd64
+            ghcr.io/auguwu/tsubasa:${{steps.tag.outputs.tag}}
+            ghcr.io/auguwu/tsubasa:${{steps.tag.outputs.tag}}-amd64
 
       - name: Build and push ARM64 images
         uses: docker/build-push-action@v2
@@ -77,6 +81,8 @@ jobs:
           tags: |
             auguwu/tsubasa:latest-arm64
             auguwu/tsubasa:${{steps.tag.outputs.tag}}-arm64
+            ghcr.io/auguwu/tsubasa:latest-arm64
+            ghcr.io/auguwu/tsubasa:${{steps.tag.outputs.tag}}-arm64
 
   deploy:
     name: Deploy to Kubernetes
