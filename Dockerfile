@@ -7,7 +7,6 @@ WORKDIR /build/tsubasa
 
 # This basically builds all the dependencies that Tsubasa requires
 COPY Cargo.toml .
-COPY docker/prebuild .
 RUN echo "fn main() {}" >> dummy.rs
 RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
 ENV RUSTFLAGS=-Ctarget-feature=-crt-static
