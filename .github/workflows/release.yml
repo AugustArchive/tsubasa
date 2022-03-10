@@ -59,7 +59,7 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.buildx/cache
           cache-to: type=local,src=/tmp/.buildx/cache
-          build-tags: VERSION,COMMIT_HASH,BUILD_DATE\n${{steps.tag.outputs.tag}},${{steps.meta.outputs.hash}},${{steps.meta.outputs.date}}
+          build-args: VERSION,COMMIT_HASH,BUILD_DATE\n${{steps.tag.outputs.tag}},${{steps.meta.outputs.hash}},${{steps.meta.outputs.date}}
           tags: |
             auguwu/tsubasa:latest
             auguwu/tsubasa:latest-amd64
