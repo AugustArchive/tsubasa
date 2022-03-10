@@ -20,9 +20,9 @@ RUN cargo build --release
 # This is the main thing that will be ran, multi-stage builds ftw!
 FROM alpine:3.15
 
-ARG VERSION
-ARG COMMIT_HASH
-ARG BUILD_DATE
+# ARG VERSION
+# ARG COMMIT_HASH
+# ARG BUILD_DATE
 
 # add external metadata!
 LABEL MAINTAINER="Noel <cutie@floofy.dev>"
@@ -32,9 +32,9 @@ LABEL gay.floof.tsubasa.buildDate=${BUILD_DATE}
 LABEL org.opencontainers.image.title="tsubasa"
 LABEL org.opencontainers.image.description="Tiny microservice to define a schema and then be executed by any search engine you wish to use, like Elasticsearch, Meilisearch, or OpenSearch!"
 LABEL org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-LABEL org.opencontainers.image.version=${VERSION}
-LABEL org.opencontainers.image.created=${BUILD_DATE}
-LABEL org.opencontainers.image.revision=${COMMIT_HASH}
+# LABEL org.opencontainers.image.version=${VERSION}
+# LABEL org.opencontainers.image.created=${BUILD_DATE}
+# LABEL org.opencontainers.image.revision=${COMMIT_HASH}
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 # Install needed dependencies
