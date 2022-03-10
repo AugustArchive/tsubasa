@@ -36,7 +36,7 @@ pub struct ElasticConfig {
     pub endpoint: String,
     pub username: Option<String>,
     pub password: Option<String>,
-    pub indexes: Option<Vec<String>>,
+    pub indexes: Vec<String>,
 }
 
 static INSTANCE: OnceCell<Config> = OnceCell::new();

@@ -18,8 +18,9 @@ use elasticsearch::{
     auth::Credentials,
     cluster::ClusterHealthParts,
     http::{
+        headers::HeaderMap,
         transport::{SingleNodeConnectionPool, TransportBuilder},
-        Url,
+        Method, Url,
     },
     Elasticsearch as ES,
 };
@@ -113,6 +114,80 @@ impl Elasticsearch {
             "Connection has been tested, received {} from /_cluster/health from cluster {}!",
             code, cluster_name
         );
+
+        // Create the indexes
+        self.create_indexes().await?;
+
+        Ok(())
+    }
+
+    pub async fn create_indexes(&self) -> Result<(), &'static str> {
+        info!("creating indexes if they don't exist...");
+
+        let config = Config::get();
+        for index in &config.elastic.indexes {
+            debug!("checking if index {} exists...", index);
+
+            let res = self
+                .client
+                .send(
+                    Method::Head,
+                    index,
+                    HeaderMap::new(),
+                    Option::<&Value>::None,
+                    Option::<&str>::None,
+                    None,
+                )
+                .await
+                .expect("Unable to make request to Elasticsearch.");
+
+            let status = res.status_code();
+            debug!("Received status code {} on `HEAD /{}`", status, index);
+
+            if status.is_success() {
+                debug!("   => Index {} already exists! Skipping...", index);
+                continue;
+            }
+
+            if status.is_server_error() {
+                error!(
+                    "  => Received a server error, skipping index creation (index={})",
+                    index
+                );
+                continue;
+            }
+
+            debug!("  => Index {} doesn't exist, now creating...", index);
+            let res2 = self
+                .client
+                .send(
+                    Method::Put,
+                    index,
+                    HeaderMap::new(),
+                    Option::<&Value>::None,
+                    Some(b"{}".as_ref()),
+                    None,
+                )
+                .await
+                .expect("Could not create index");
+
+            let res2_status = res2.status_code();
+            debug!("    => Received status {} on `PUT /{}`", res2_status, index);
+
+            if res2_status.is_success() {
+                debug!(
+                    "    => Index {} now exists, you can query it using /search/:index!",
+                    index
+                );
+            } else {
+                let body = res2
+                    .json::<Value>()
+                    .await
+                    .expect("Unable to deserialise JSON payload");
+
+                error!("    => Unable to create index {}: {}", index, body);
+            }
+        }
 
         Ok(())
     }
