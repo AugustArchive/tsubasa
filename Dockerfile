@@ -34,7 +34,7 @@ LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 # Copy our Docker scripts to this directory
 COPY docker /app/noel/tsubasa/scripts
-COPY ./target/release/tsubasa/tsubasa .
+COPY ./target/release/tsubasa .
 
 # Make these scripts executable
 RUN chmod +x /app/noel/tsubasa/scripts/docker-entrypoint.sh \
