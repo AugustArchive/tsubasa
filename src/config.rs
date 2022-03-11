@@ -20,7 +20,7 @@ use std::{env::var, fs};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pub debug: bool,
+    pub debug: Option<bool>,
     pub http: Option<HttpConfig>,
     pub elastic: ElasticConfig,
 }

@@ -28,6 +28,7 @@ use ansi_term::Colour::RGB;
 use chrono::Local;
 use config::{Config, HttpConfig};
 use fern::Dispatch;
+use rocket::routes;
 use rocket_prometheus::PrometheusMetrics;
 use std::env::var;
 use std::thread::current;
@@ -83,6 +84,12 @@ async fn main() -> Result<()> {
 }
 
 fn setup_logging(config: &'static Config) {
+    let is_debug = if let Some(debug) = config.debug {
+        debug
+    } else {
+        false
+    };
+
     let dispatch = Dispatch::new()
         .format(|out, message, record| {
             // If `TSUBASA_DISABLE_COLORS` is enabled as an environment variable
@@ -128,7 +135,7 @@ fn setup_logging(config: &'static Config) {
         .level_for("mio::poll", log::LevelFilter::Off)
         .level_for("want", log::LevelFilter::Off)
         .level_for("tokio_util::codec::framed_impl", log::LevelFilter::Off)
-        .level(if config.debug {
+        .level(if is_debug {
             log::LevelFilter::Debug
         } else {
             log::LevelFilter::Info
