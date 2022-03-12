@@ -22,9 +22,11 @@ WORKDIR /app/noel/tsubasa
 COPY docker /app/noel/tsubasa/scripts
 COPY tsubasa .
 
-RUN chmod +x /app/noel/tsubasa/scripts/docker-entrypoint.sh
-RUN chmod +x /app/noel/tsubasa/scripts/runner.sh
+RUN chmod +x /app/noel/tsubasa/scripts/docker-entrypoint.sh \
+    /app/noel/tsubasa/scripts/runner.sh
+
+RUN ln -s /app/noel/tsubasa/tsubasa /usr/bin/tsubasa
 
 USER 1001
-ENTRYPOINT ["/app/noel/ume/scripts/docker-entrypoint.sh"]
-CMD ["/app/noel/ume/scripts/runner.sh"]
+ENTRYPOINT ["/app/noel/tsubasa/scripts/docker-entrypoint.sh"]
+CMD ["/app/noel/tsubasa/scripts/runner.sh"]

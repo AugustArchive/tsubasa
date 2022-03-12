@@ -30,15 +30,20 @@ RUN make build
 # Now, this is the final stage! :D
 FROM alpine:3.15
 
+# install needed dependencies
+RUN apk update && apk add --no-cache bash musl-dev libc-dev gcompat
+
 # Change the directory to `/app/noel/tsubasa`
 WORKDIR /app/noel/tsubasa
 
 # Bring in our Docker scripts to the `scripts/` directory
-COPY docker scripts
+COPY docker /app/noel/tsubasa/scripts
 COPY --from=builder /build/tsubasa/bin/tsubasa .
 
 RUN chmod +x /app/noel/tsubasa/scripts/docker-entrypoint.sh \
   /app/noel/tsubasa/scripts/runner.sh
+
+RUN ln -s /app/noel/tsubasa/tsubasa /usr/bin/tsubasa
 
 USER 1001
 
