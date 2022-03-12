@@ -20,6 +20,7 @@ import (
 	"floofy.dev/tsubasa/server"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 var rootCmd *cobra.Command
@@ -64,6 +65,14 @@ func runServer(_ *cobra.Command, _ []string) error {
 
 	logrus.SetFormatter(internal.NewFormatter())
 	logrus.SetReportCaller(true)
+
+	buildDate, _ := time.Parse(time.RFC3339, internal.BuildDate)
+
+	logrus.Infof("Running Tsubasa v%s (commit: %s | build date: %s)",
+		internal.Version,
+		internal.CommitSHA,
+		buildDate.Format(time.RFC1123),
+	)
 
 	var config *internal.Config
 	if path == nil {
