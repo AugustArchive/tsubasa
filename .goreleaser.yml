@@ -24,7 +24,7 @@ builds:
   - id: "tsubasa"
     binary: "tsubasa"
     ldflags:
-      - -s -w -X floofy.dev/tsubasa/internal.Version={{ .Version }} -X floofy.dev/tsubasa/internal.CommitSHA={{ .CommitSHA }} -X floofy.dev/tsubasa/internal.BuildDate={{ .Date }}
+      - -s -w -X floofy.dev/tsubasa/internal.Version={{ .Version }} -X floofy.dev/tsubasa/internal.CommitSHA={{ .ShortCommit }} -X floofy.dev/tsubasa/internal.BuildDate={{ .Date }}
     goos:
       - linux
       - darwin
