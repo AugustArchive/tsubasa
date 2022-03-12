@@ -19,7 +19,6 @@ FROM alpine:3.15
 RUN apk update && apk add --no-cache bash musl-dev libc-dev gcompat
 
 WORKDIR /app/noel/tsubasa
-
 COPY docker /app/noel/tsubasa/scripts
 COPY tsubasa .
 
