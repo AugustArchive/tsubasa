@@ -11,7 +11,7 @@ Elasticsearch index, so this is just a simple way to retrieve data from it.
 Sweet, you want to use **Tsubasa** for your own use cases! You can install the **Tsubasa** server:
 
 - using the [**Noelware Helm Charts**](#helm-chart);
-- using the official [Tsubasa Docker Image](#docker-image);
+- using the official [**Tsubasa Docker Image**](#docker-image);
 - locally under the main repository [you see](#locally-with-git)
 
 ### System Requirements
@@ -20,6 +20,9 @@ you're running on the Helm Chart since that handles it for you.
 
 - **2GB** or higher of system RAM
 - **2 CPU Cores** or higher
+- **Go** 1.17 or higher
+- An instance of **Elasticsearch** running. This supports single-node and multi-node instances and multiple
+  authentication methods.
 
 ### Helm Chart
 You can install **Tsubasa** on your Kubernetes cluster with a single command! You will need to index the

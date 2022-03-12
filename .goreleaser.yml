@@ -1,0 +1,193 @@
+# 🐇 tsubasa: Tiny, and simple Elasticsearch microservice to abstract searching objects!
+# Copyright 2022 Noel <cutie@floofy.dev>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+project_name: tsubasa
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+
+builds:
+  - id: "tsubasa"
+    binary: "tsubasa"
+    ldflags:
+      - -s -w -X floofy.dev/tsubasa/internal.Version={{ .Version }} -X floofy.dev/tsubasa/internal.CommitSHA={{ .CommitSHA }} -X floofy.dev/tsubasa/internal.BuildDate={{ .Date }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - "386"
+      - arm
+    goarm:
+      - "6"
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm64
+      - goarm:
+        goarch: "6"
+      - goarm:
+        goarch: "7"
+
+dockers:
+  - image_templates:
+      - auguwu/tsubasa:latest-amd64
+      - auguwu/tsubasa:{{ .Version }}-amd64
+      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
+      - ghcr.io/auguwu/tsubasa:latest
+      - ghcr.io/auguwu/tsubasa:latest-amd64
+      - ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64
+      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
+    ids:
+      - tsubasa
+    goarch: amd64
+    build_flag_templates:
+      - --platform=linux/amd64
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
+      - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.created={{ .Date }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
+    dockerfile: release.Dockerfile
+    use: buildx
+
+  - image_templates:
+      - auguwu/tsubasa:latest-arm64
+      - auguwu/tsubasa:{{ .Version }}-arm64
+      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
+      - ghcr.io/auguwu/tsubasa:latest-arm64
+      - ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64
+      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
+    ids:
+      - tsubasa
+    goarch: arm64
+    goarm: ""
+    build_flag_templates:
+      - --platform=linux/arm64
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
+      - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.created={{ .Date }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
+    dockerfile: release.Dockerfile
+    use: buildx
+
+  - image_templates:
+      - auguwu/tsubasa:latest-armv7
+      - auguwu/tsubasa:{{ .Version }}-armv7
+      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
+      - ghcr.io/auguwu/tsubasa:latest-armv7
+      - ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7
+      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
+    ids:
+      - tsubasa
+    goarch: arm
+    goarm: "7"
+    build_flag_templates:
+      - --platform=linux/arm64
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
+      - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.created={{ .Date }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
+    dockerfile: release.Dockerfile
+    use: buildx
+
+docker_manifests:
+  - name_template: auguwu/tsubasa:{{ .Version }}
+    image_templates:
+      - auguwu/tsubasa:{{ .Version }}-amd64
+      - auguwu/tsubasa:{{ .Version }}-arm64
+      - auguwu/tsubasa:{{ .Version }}-armv7
+
+  - name_template: ghcr.io/auguwu/tsubasa:{{ .Version }}
+    image_templates:
+      - ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64
+      - ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64
+      - ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7
+
+  - name_template: auguwu/tsubasa:{{ .Major }}.{{ .Minor }}
+    image_templates:
+      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
+      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
+      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
+
+  - name_template: ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}
+    image_templates:
+      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
+      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
+      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
+
+  - name_template: auguwu/tsubasa:latest
+    image_templates:
+      - auguwu/tsubasa:latest-amd64
+      - auguwu/tsubasa:latest-arm64
+      - auguwu/tsubasa:latest-armv7
+
+  - name_template: ghcr.io/auguwu/tsubasa:latest
+    image_templates:
+      - ghcr.io/auguwu/tsubasa:latest-amd64
+      - ghcr.io/auguwu/tsubasa:latest-arm64
+      - ghcr.io/auguwu/tsubasa:latest-armv7
+
+archives:
+  - id: default
+    builds:
+      - tsubasa
+    format_overrides:
+      - goos: windows
+        format: zip
+    replacements:
+      windows: Windows
+      darwin: Darwin
+      386: i386
+      amd64: x86_64
+
+brews:
+  - goarm: "6"
+    tap:
+      owner: Noelware
+      name: homebrew-taps
+      token: "{{ .Env.HOMEBREW_TAP_GH_PAT }}"
+    commit_author:
+      name: "Noel"
+      email: "cutie@floofy.dev"
+    description: Tiny, and simple Elasticsearch microservice to abstract searching objects!
+
+signs:
+  - artifacts: checksum
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-SNAPSHOT"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

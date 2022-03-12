@@ -1,47 +1,41 @@
-FROM rustlang/rust:nightly-alpine3.15 AS builder
+# 🐇 tsubasa: Microservice to define a schema and execute it in a fast environment.
+# Copyright 2022 Noel <cutie@floofy.dev>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-# why is rust like this
-# source: https://github.com/Benricheson101/anti-phishing-bot/blob/single_server/Dockerfile
-RUN apk update && apk add --no-cache build-base openssl-dev gcompat libc6-compat bash
+# This is the dockerfile for development if you need it. :shrug:
+FROM golang:1.17-alpine AS builder
+
+# Install the needed dependencies
+RUN apk update && apk add --no-cache ca-certificates git make jq
+
+# Change the working directory to /build/ume
 WORKDIR /build/tsubasa
-
-# This basically builds all the dependencies that Tsubasa requires
-COPY Cargo.toml .
-RUN echo "fn main() {}" >> dummy.rs
-RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
-ENV RUSTFLAGS=-Ctarget-feature=-crt-static
-RUN if [[ $(uname -m) =~ ^arm ]]; then CARGO_INCREMENTAL=1 cargo build --release --target aarch64-unknown-linux-musl; else CARGO_INCREMENTAL=1 cargo build --release; fi
-RUN rm dummy.rs && sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
-
-# Now we build the actual server
 COPY . .
-RUN CARGO_INCREMENTAL=1 cargo build --release
 
-# This is the main thing that will be ran, multi-stage builds ftw!
+# Build the source code
+RUN make deps
+RUN make build
+
+# Now, this is the final stage! :D
 FROM alpine:3.15
 
-# ARG VERSION
-# ARG COMMIT_HASH
-# ARG BUILD_DATE
-
-# add external metadata!
-LABEL MAINTAINER="Noel <cutie@floofy.dev>"
-LABEL gay.floof.tsubasa.version=${VERSION}
-LABEL gay.floof.tsubasa.commitSha=${COMMIT_HASH}
-LABEL gay.floof.tsubasa.buildDate=${BUILD_DATE}
-LABEL org.opencontainers.image.title="tsubasa"
-LABEL org.opencontainers.image.description="Tiny microservice to define a schema and then be executed by any search engine you wish to use, like Elasticsearch, Meilisearch, or OpenSearch!"
-LABEL org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-# LABEL org.opencontainers.image.version=${VERSION}
-# LABEL org.opencontainers.image.created=${BUILD_DATE}
-# LABEL org.opencontainers.image.revision=${COMMIT_HASH}
-LABEL org.opencontainers.image.licenses="Apache-2.0"
-
-# Install needed dependencies
+# Change the directory to `/app/noel/tsubasa`
 WORKDIR /app/noel/tsubasa
-RUN apk update && apk add --no-cache build-base openssl bash
-COPY docker /app/noel/tsubasa/scripts
-COPY --from=builder /build/tsubasa/target/release/tsubasa .
+
+# Bring in our Docker scripts to the `scripts/` directory
+COPY docker scripts
+COPY --from=builder /build/tsubasa/bin/tsubasa .
 
 RUN chmod +x /app/noel/tsubasa/scripts/docker-entrypoint.sh \
   /app/noel/tsubasa/scripts/runner.sh

@@ -13,16 +13,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use libc::{c_int, sighandler_t, signal, SIGINT, SIGTERM};
-use log::warn;
+package middleware
 
-extern "C" fn handler(exit: c_int) {
-    warn!("exiting server with exit code {}...", exit);
-    std::process::exit(exit);
-}
+import (
+	"floofy.dev/tsubasa/util"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/sirupsen/logrus"
+	"net/http"
+	"time"
+)
 
-/// Applies any signals to exit the process cleanly.
-pub unsafe fn add_signals() {
-    signal(SIGINT, handler as extern "C" fn(_) as sighandler_t);
-    signal(SIGTERM, handler as extern "C" fn(_) as sighandler_t);
+func Logging(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		s := time.Now()
+		ww := middleware.NewWrapResponseWriter(w, req.ProtoMajor)
+		next.ServeHTTP(ww, req)
+
+		code := util.GetStatusCode(ww.Status())
+		logrus.Infof("[%s] %s %s (%s) => %d %s (%d bytes [%s])",
+			req.RemoteAddr,
+			req.Method,
+			req.URL.Path,
+			req.Proto,
+			ww.Status(),
+			code,
+			ww.BytesWritten(),
+			time.Since(s).String())
+	})
 }

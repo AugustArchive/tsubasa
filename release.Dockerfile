@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # 🐇 tsubasa: Microservice to define a schema and execute it in a fast environment.
 # Copyright 2022 Noel <cutie@floofy.dev>
 #
@@ -15,24 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BLUE='\033[38;2;81;81;140m'
-GREEN='\033[38;2;165;204;165m'
-PINK='\033[38;2;241;204;209m'
-RESET='\033[0m'
-BOLD='\033[1m'
-UNDERLINE='\033[4m'
+# This is the release image that is used from Docker Hub and ghcr.io!
+FROM alpine:3.15
 
-info() {
-  timestamp=$(date +"%D ~ %r")
-  printf "%b\\n" "${GREEN}${BOLD}info${RESET}  | ${PINK}${BOLD}${timestamp}${RESET} ~ $1"
-}
+RUN apk update && apk add --no-cache bash musl-dev libc-dev gcompat
 
-debug() {
-  local debug="${TSUBASA_DEBUG:-false}"
-  shopt -s nocasematch
-  timestamp=$(date +"%D ~%r")
+WORKDIR /app/noel/tsubasa
 
-  if ! [[ "$debug" = "1" || "$debug" =~ ^(no|false)$ ]]; then
-    printf "%b\\n" "${BLUE}${BOLD}debug${RESET} | ${PINK}${BOLD}${timestamp}${RESET} ~ $1"
-  fi
-}
+COPY docker /app/noel/tsubasa/scripts
+COPY tsubasa .
+
+RUN chmod +x /app/noel/tsubasa/scripts/docker-entrypoint.sh
+RUN chmod +x /app/noel/tsubasa/scripts/runner.sh
+
+USER 1001
+ENTRYPOINT ["/app/noel/ume/scripts/docker-entrypoint.sh"]
+CMD ["/app/noel/ume/scripts/runner.sh"]
