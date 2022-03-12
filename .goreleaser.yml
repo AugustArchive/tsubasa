@@ -68,6 +68,10 @@ dockers:
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
     dockerfile: release.Dockerfile
     use: buildx
+    extra_files:
+      - docker/docker-entrypoint.sh
+      - docker/runner.sh
+      - docker/liblog.sh
 
   - image_templates:
       - auguwu/tsubasa:latest-arm64
@@ -91,6 +95,10 @@ dockers:
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
     dockerfile: release.Dockerfile
     use: buildx
+    extra_files:
+      - docker/docker-entrypoint.sh
+      - docker/runner.sh
+      - docker/liblog.sh
 
   - image_templates:
       - auguwu/tsubasa:latest-armv7
@@ -114,6 +122,10 @@ dockers:
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
     dockerfile: release.Dockerfile
     use: buildx
+    extra_files:
+      - docker/docker-entrypoint.sh
+      - docker/runner.sh
+      - docker/liblog.sh
 
 docker_manifests:
   - name_template: auguwu/tsubasa:{{ .Version }}
