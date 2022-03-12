@@ -54,7 +54,7 @@ jobs:
         run: make fmt
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           args: --issues-exit-code=1
           only-new-issues: false
