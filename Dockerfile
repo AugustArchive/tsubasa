@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # This is the dockerfile for development if you need it. :shrug:
-FROM golang:1.17-alpine AS builder
+FROM golang:1.18-alpine AS builder
 
 # Install the needed dependencies
 RUN apk update && apk add --no-cache ca-certificates git make jq
