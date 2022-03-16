@@ -67,6 +67,10 @@ type ElasticConfig struct {
 
 	// The list of nodes to use when connecting to Elasticsearch.
 	Nodes []string `toml:"nodes"`
+
+	// CACertPath is the path to a .pem file to use TLS connections within
+	// Elasticsearch.
+	CACertPath *string `toml:"ca_path"`
 }
 
 // NewConfig initialized the configuration for Tsubasa.

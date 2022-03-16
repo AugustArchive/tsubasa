@@ -19,10 +19,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"encoding/pem"
+	"errors"
 	"floofy.dev/tsubasa/internal/result"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"time"
 )
 
@@ -79,6 +82,25 @@ func NewElasticService(config *Config) (*ElasticService, error) {
 
 	if config.Elastic.Password != nil {
 		cfg.Password = *config.Elastic.Password
+	}
+
+	if config.Elastic.CACertPath != nil {
+		contents, err := ioutil.ReadFile(*config.Elastic.CACertPath)
+		if err != nil {
+			return nil, err
+		}
+
+		block, _ := pem.Decode(contents)
+		if block == nil {
+			return nil, errors.New("Unable to parse PEM file")
+		}
+
+		var buf bytes.Buffer
+		if err := pem.Encode(&buf, block); err != nil {
+			return nil, err
+		}
+
+		cfg.CACert = buf.Bytes()
 	}
 
 	client, err := elasticsearch.NewClient(cfg)
