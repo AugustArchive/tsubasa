@@ -88,7 +88,7 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
       - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version} }{{ end }}
+      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version }}{{ end }}
       - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
@@ -115,7 +115,7 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
       - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version} }{{ end }}
+      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version }}{{ end }}
       - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
