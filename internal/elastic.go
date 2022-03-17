@@ -88,7 +88,10 @@ func NewElasticService(config *Config) (*ElasticService, error) {
 	if config.Elastic.CACertPath != nil {
 		logrus.Debugf("Specified TLS certificate for Elastic at path %v!", config.Elastic.CACertPath)
 
-		tlsConfig := tls.Config{}
+		tlsConfig := tls.Config{
+			InsecureSkipVerify: true,
+		}
+
 		cacert, err := ioutil.ReadFile(*config.Elastic.CACertPath)
 		if err != nil {
 			return nil, err
