@@ -24,7 +24,7 @@ builds:
   - id: "tsubasa"
     binary: "tsubasa"
     ldflags:
-      - -s -w -X floofy.dev/tsubasa/internal.Version={{ .Version }} -X floofy.dev/tsubasa/internal.CommitSHA={{ .ShortCommit }} -X floofy.dev/tsubasa/internal.BuildDate={{ .Date }}
+      - -s -w -X floofy.dev/tsubasa/internal.Version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version }}{{ end }} -X floofy.dev/tsubasa/internal.CommitSHA={{ .ShortCommit }} -X floofy.dev/tsubasa/internal.BuildDate={{ .Date }}
     goos:
       - linux
       - darwin
@@ -47,13 +47,12 @@ builds:
 
 dockers:
   - image_templates:
-      - auguwu/tsubasa:latest-amd64
-      - auguwu/tsubasa:{{ .Version }}-amd64
-      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
-      - ghcr.io/auguwu/tsubasa:latest
-      - ghcr.io/auguwu/tsubasa:latest-amd64
-      - ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64
-      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-amd64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-amd64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64{{ end }}
     ids:
       - tsubasa
     goarch: amd64
@@ -62,7 +61,7 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
       - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version }}{{ end }}
       - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
@@ -74,12 +73,12 @@ dockers:
       - docker/liblog.sh
 
   - image_templates:
-      - auguwu/tsubasa:latest-arm64
-      - auguwu/tsubasa:{{ .Version }}-arm64
-      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
-      - ghcr.io/auguwu/tsubasa:latest-arm64
-      - ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64
-      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-arm64{{ else }}auguwu/tsubasa:latest-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-arm64{{ else }}auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-arm64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-arm64{{ else }}ghcr.io/auguwu/tsubasa:latest-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-arm64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-arm64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
     ids:
       - tsubasa
     goarch: arm64
@@ -89,7 +88,7 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
       - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version} }{{ end }}
       - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
@@ -101,12 +100,12 @@ dockers:
       - docker/liblog.sh
 
   - image_templates:
-      - auguwu/tsubasa:latest-armv7
-      - auguwu/tsubasa:{{ .Version }}-armv7
-      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
-      - ghcr.io/auguwu/tsubasa:latest-armv7
-      - ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7
-      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-armv7{{ else }}auguwu/tsubasa:latest-armv7{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-armv7{{ else }}auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-armv7{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-armv7{{ else }}ghcr.io/auguwu/tsubasa:latest-armv7{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-armv7{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-armv7{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
     ids:
       - tsubasa
     goarch: arm
@@ -116,7 +115,7 @@ dockers:
       - --label=org.opencontainers.image.title={{ .ProjectName }}
       - --label=org.opencontainers.image.description=Tiny, and simple Elasticsearch microservice to abstract searching objects!
       - --label=org.opencontainers.image.source=https://github.com/auguwu/tsubasa
-      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.version={{ if .IsSnapshot }}{{ .Version }}-nightly{{ else }}{{ .Version} }{{ end }}
       - --label=org.opencontainers.image.created={{ .Date }}
       - --label=org.opencontainers.image.revision={{ .FullCommit }}
       - --label=org.opencontainers.image.licenses=MIT,GPL-3.0
@@ -128,41 +127,42 @@ dockers:
       - docker/liblog.sh
 
 docker_manifests:
-  - name_template: auguwu/tsubasa:{{ .Version }}
+  - name_template: {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly{{ else }}auguwu/tsubasa:{{ .Version }}{{ end }}
     image_templates:
-      - auguwu/tsubasa:{{ .Version }}-amd64
-      - auguwu/tsubasa:{{ .Version }}-arm64
-      - auguwu/tsubasa:{{ .Version }}-armv7
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
 
-  - name_template: ghcr.io/auguwu/tsubasa:{{ .Version }}
+  - name_template: {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}{{ end }}
     image_templates:
-      - ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64
-      - ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64
-      - ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
 
-  - name_template: auguwu/tsubasa:{{ .Major }}.{{ .Minor }}
+  - name_template: {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}{{ end }}
     image_templates:
-      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
-      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
-      - auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
 
-  - name_template: ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}
-    image_templates:
-      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64
-      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64
-      - ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7
 
-  - name_template: auguwu/tsubasa:latest
+  - name_template: {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}{{ end }}
     image_templates:
-      - auguwu/tsubasa:latest-amd64
-      - auguwu/tsubasa:latest-arm64
-      - auguwu/tsubasa:latest-armv7
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
 
-  - name_template: ghcr.io/auguwu/tsubasa:latest
+  - name_template: {{ if .IsSnapshot }}auguwu/tsubasa:nightly{{ else }}auguwu/tsubasa:latest{{ end }}
     image_templates:
-      - ghcr.io/auguwu/tsubasa:latest-amd64
-      - ghcr.io/auguwu/tsubasa:latest-arm64
-      - ghcr.io/auguwu/tsubasa:latest-armv7
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-amd64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-armv7{{ end }}
+
+  - name_template: {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly{{ else }}ghcr.io/auguwu/tsubasa:latest{{ end }}
+    image_templates:
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-amd64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-armv7{{ end }}
 
 archives:
   - id: default
@@ -177,6 +177,7 @@ archives:
       386: i386
       amd64: x86_64
 
+{{ if not .IsSnapshot }}
 brews:
   - goarm: "6"
     tap:
@@ -187,6 +188,7 @@ brews:
       name: "Noel"
       email: "cutie@floofy.dev"
     description: Tiny, and simple Elasticsearch microservice to abstract searching objects!
+{{ end }}
 
 signs:
   - artifacts: checksum
@@ -195,7 +197,7 @@ checksum:
   name_template: "checksums.txt"
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-SNAPSHOT"
+  name_template: "{{ incpatch .Version }}-nightly"
 
 changelog:
   sort: asc
