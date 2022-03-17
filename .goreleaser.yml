@@ -130,39 +130,38 @@ docker_manifests:
   - name_template: {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly{{ else }}auguwu/tsubasa:{{ .Version }}{{ end }}
     image_templates:
       - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-amd64{{ end }}
-      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
-      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-arm64{{ else }}auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Version }}-nightly-armv7{{ else }}auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
 
   - name_template: {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}{{ end }}
     image_templates:
       - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-amd64{{ end }}
-      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
-      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-arm64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Version }}-nightly-armv7{{ else }}ghcr.io/auguwu/tsubasa:{{ .Version }}-armv7{{ end }}
 
   - name_template: {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}{{ end }}
     image_templates:
       - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64{{ end }}
-      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
-      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
-
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-arm64{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-armv7{{ else }}auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
 
   - name_template: {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}{{ end }}
     image_templates:
       - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-amd64{{ end }}
-      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
-      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-arm64{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-nightly-armv7{{ else }}ghcr.io/auguwu/tsubasa:{{ .Major }}.{{ .Minor }}-armv7{{ end }}
 
   - name_template: {{ if .IsSnapshot }}auguwu/tsubasa:nightly{{ else }}auguwu/tsubasa:latest{{ end }}
     image_templates:
       - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-amd64{{ end }}
-      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-arm64{{ end }}
-      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-amd64{{ else }}auguwu/tsubasa:latest-armv7{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-arm64{{ else }}auguwu/tsubasa:latest-arm64{{ end }}
+      - {{ if .IsSnapshot }}auguwu/tsubasa:nightly-armv7{{ else }}auguwu/tsubasa:latest-armv7{{ end }}
 
   - name_template: {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly{{ else }}ghcr.io/auguwu/tsubasa:latest{{ end }}
     image_templates:
       - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-amd64{{ end }}
-      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-arm64{{ end }}
-      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-amd64{{ else }}ghcr.io/auguwu/tsubasa:latest-armv7{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-arm64{{ else }}ghcr.io/auguwu/tsubasa:latest-arm64{{ end }}
+      - {{ if .IsSnapshot }}ghcr.io/auguwu/tsubasa:nightly-armv7{{ else }}ghcr.io/auguwu/tsubasa:latest-armv7{{ end }}
 
 archives:
   - id: default
