@@ -3,12 +3,15 @@ on:
   release:
     types:
       - released
+
 concurrency:
   group: goreleaser
   cancel-in-progress: true
+
 permissions:
   contents: write
   packages: write
+
 jobs:
   release:
     runs-on: ubuntu-latest

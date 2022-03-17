@@ -1,6 +1,5 @@
 name: Release snapshot workflow
 on:
-  workflow_dispatch:
   release:
     types:
       - prereleased
