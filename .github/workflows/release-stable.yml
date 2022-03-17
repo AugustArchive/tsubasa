@@ -1,9 +1,8 @@
 name: Release workflow
 on:
-  workflow_dispatch:
   release:
     types:
-      - published
+      - released
 concurrency:
   group: goreleaser
   cancel-in-progress: true
