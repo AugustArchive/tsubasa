@@ -18,14 +18,15 @@ package internal
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
-	"errors"
 	"floofy.dev/tsubasa/internal/result"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -85,22 +86,23 @@ func NewElasticService(config *Config) (*ElasticService, error) {
 	}
 
 	if config.Elastic.CACertPath != nil {
-		contents, err := ioutil.ReadFile(*config.Elastic.CACertPath)
+		logrus.Debugf("Specified TLS certificate for Elastic at path %v!", config.Elastic.CACertPath)
+
+		tlsConfig := tls.Config{}
+		cacert, err := ioutil.ReadFile(*config.Elastic.CACertPath)
 		if err != nil {
 			return nil, err
 		}
 
-		block, _ := pem.Decode(contents)
-		if block == nil {
-			return nil, errors.New("Unable to parse PEM file")
+		pool := x509.NewCertPool()
+		pool.AppendCertsFromPEM(cacert)
+		tlsConfig.RootCAs = pool
+
+		transport := &http.Transport{
+			TLSClientConfig: &tlsConfig,
 		}
 
-		var buf bytes.Buffer
-		if err := pem.Encode(&buf, block); err != nil {
-			return nil, err
-		}
-
-		cfg.CACert = buf.Bytes()
+		cfg.Transport = transport
 	}
 
 	client, err := elasticsearch.NewClient(cfg)
