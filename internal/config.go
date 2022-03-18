@@ -16,7 +16,6 @@
 package internal
 
 import (
-	"fmt"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -93,7 +92,6 @@ func NewConfig(path string) (*Config, error) {
 	}
 
 	logrus.Info("Loaded configuration successfully. :)")
-	fmt.Println(&config)
 	return &config, nil
 }
 
