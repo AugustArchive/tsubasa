@@ -59,5 +59,23 @@ func NewElasticRouter() chi.Router {
 		util.WriteJson(w, res.StatusCode, res)
 	})
 
+	r.Post("/{index}/raw", func(w http.ResponseWriter, req *http.Request) {
+		status, body, err := util.GetJsonBody(req)
+		if err != nil {
+			util.WriteJson(w, status, result.Err(status, "INVALID_JSON_BODY", err.Error()))
+			return
+		}
+
+		index := chi.URLParam(req, "index")
+		data, ok := body["data"].(map[string]interface{})
+		if !ok {
+			util.WriteJson(w, 406, result.Err(406, "INVALID_DATA_TYPE", fmt.Sprintf("Invalid data type on {data=>%v} (expected JSON object)", data)))
+			return
+		}
+
+		res := elastic.SearchRaw(index, data)
+		util.WriteJson(w, res.StatusCode, res)
+	})
+
 	return r
 }

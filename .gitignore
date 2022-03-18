@@ -514,3 +514,5 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 config.toml
+dist
+certificates

@@ -47,7 +47,7 @@ func NewContainer(config *Config) *Container {
 
 	elastic, err := NewElasticService(config)
 	if err != nil {
-		logrus.Fatalf("Unable to create a connection to Elasticsearch: %v", err)
+		logrus.Panic("Unable to create a connection to Elasticsearch", err)
 	}
 
 	var sc *sentry.Client

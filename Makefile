@@ -35,27 +35,35 @@ ifeq ($(TARGET_OS),windows)
 	EXTENSION := .exe
 endif
 
+.PHONY: help
+help: ## Prints this help thing
+	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make \033[36m<target>\033[0m\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+
 # Usage: `make deps`
-deps:
+.PHONY: deps
+deps: ## Updates the dependency tree within this project
 	@echo Updating dependency tree...
 	go mod tidy
 	go mod download
 	@echo Updated dependency tree successfully.
 
+.PHONY: build
 # Usage: `make build`
-build:
+build: ## Builds the main binary
 	@echo Now building Tsubasa for platform $(GOOS)/$(GOARCH)!
 	go build -ldflags "-s -w -X floofy.dev/tsubasa/internal.Version=${VERSION} -X floofy.dev/tsubasa/internal.CommitSHA=${COMMIT_SHA} -X \"floofy.dev/tsubasa/internal.BuildDate=${BUILD_DATE}\"" -o ./bin/tsubasa$(EXTENSION)
 	@echo Successfully built the binary. Use './bin/tsubasa$(EXTENSION)' to run!
 
+.PHONY: clean
 # Usage: `make clean`
-clean:
+clean: ## Cleans the project
 	@echo Now cleaning project..
 	rm -rf bin/ .profile/
 	go clean
 	@echo Done!
 
+.PHONY: fmt
 # Usage: `make fmt`
-fmt:
+fmt: ## Formats the project
 	@echo Formatting project...
 	go fmt

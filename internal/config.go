@@ -16,6 +16,7 @@
 package internal
 
 import (
+	"fmt"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -56,10 +57,10 @@ type Config struct {
 
 type ElasticConfig struct {
 	// The password to use if Basic authentication is enabled on the server.
-	Password *string `toml:"password"`
+	Password *string `toml:"password,omitempty"`
 
 	// The username to use if Basic authentication is enabled on the server.
-	Username *string `toml:"username"`
+	Username *string `toml:"username,omitempty"`
 
 	// The list of indexes Tsubasa should keep track of. If the index doesn't exist,
 	// then Tsubasa will configure it.
@@ -70,7 +71,10 @@ type ElasticConfig struct {
 
 	// CACertPath is the path to a .pem file to use TLS connections within
 	// Elasticsearch.
-	CACertPath *string `toml:"ca_path"`
+	CACertPath *string `toml:"ca_path,omitempty"`
+
+	// SkipSSLVerify skips the SSL certificates.
+	SkipSSLVerify bool `toml:"skip_ssl_verify"`
 }
 
 // NewConfig initialized the configuration for Tsubasa.
@@ -88,6 +92,8 @@ func NewConfig(path string) (*Config, error) {
 		logrus.Fatalf("Unable to unmarshal config from path '%s': %v", path, err)
 	}
 
+	logrus.Info("Loaded configuration successfully. :)")
+	fmt.Println(&config)
 	return &config, nil
 }
 

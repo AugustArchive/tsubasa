@@ -91,11 +91,5 @@ func runServer(_ *cobra.Command, _ []string) error {
 		config = c
 	}
 
-	if config.Debug {
-		logrus.SetLevel(logrus.DebugLevel)
-	} else {
-		logrus.SetLevel(logrus.InfoLevel)
-	}
-
 	return server.Start(config)
 }

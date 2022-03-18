@@ -72,6 +72,9 @@ type ElasticService struct {
 func NewElasticService(config *Config) (*ElasticService, error) {
 	logrus.Info("Now connecting to Elasticsearch...")
 
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.MaxIdleConnsPerHost = 10
+
 	cfg := elasticsearch.Config{
 		Addresses:            config.Elastic.Nodes,
 		DiscoverNodesOnStart: true,
@@ -85,11 +88,18 @@ func NewElasticService(config *Config) (*ElasticService, error) {
 		cfg.Password = *config.Elastic.Password
 	}
 
-	if config.Elastic.CACertPath != nil {
-		logrus.Debugf("Specified TLS certificate for Elastic at path %v!", config.Elastic.CACertPath)
-
-		tlsConfig := tls.Config{
+	if config.Elastic.SkipSSLVerify {
+		transport.TLSClientConfig = &tls.Config{
 			InsecureSkipVerify: true,
+		}
+	}
+
+	if config.Elastic.CACertPath != nil {
+		logrus.Infof("Specified TLS certificate for Elastic at path %v!", config.Elastic.CACertPath)
+
+		var err error
+		if transport.TLSClientConfig.RootCAs, err = x509.SystemCertPool(); err != nil {
+			logrus.Fatal("Unable to assign root certificates:", err)
 		}
 
 		cacert, err := ioutil.ReadFile(*config.Elastic.CACertPath)
@@ -97,17 +107,12 @@ func NewElasticService(config *Config) (*ElasticService, error) {
 			return nil, err
 		}
 
-		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(cacert)
-		tlsConfig.RootCAs = pool
-
-		transport := &http.Transport{
-			TLSClientConfig: &tlsConfig,
-		}
-
-		cfg.Transport = transport
+		transport.TLSClientConfig.RootCAs.AppendCertsFromPEM(cacert)
+		transport.TLSClientConfig.ClientAuth = tls.RequireAnyClientCert
+		transport.TLSClientConfig.InsecureSkipVerify = true
 	}
 
+	cfg.Transport = transport
 	client, err := elasticsearch.NewClient(cfg)
 	if err != nil {
 		return nil, err
@@ -224,6 +229,85 @@ func (es *ElasticService) SearchInIndex(index string, matchType string, data int
 
 	if err != nil {
 		logrus.Errorf("Unable to encode query %v: %v", query, err)
+		return result.Err(500, "INTERNAL_SERVER_ERROR", "Unknown service error has occurred.")
+	}
+
+	defer res.Body.Close()
+
+	if res.IsError() {
+		var e map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
+			logrus.Errorf("Unable to decode JSON payload from Elastic when received a non-acceptable status code: %s", err)
+			return result.Err(500, "INTERNAL_SERVER_ERROR", "Unknown service error has occurred.")
+		} else {
+			logrus.Errorf("Unable to search data (%v) from index %s because: '%s'.",
+				data,
+				index,
+				fmt.Sprintf("%s: %s",
+					e["error"].(map[string]interface{})["type"],
+					e["error"].(map[string]interface{})["reason"]))
+
+			return result.Err(500, "INTERNAL_SERVER_ERROR", "Unknown service error has occurred.")
+		}
+	}
+
+	var d map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&d); err != nil {
+		logrus.Errorf("Unable to decode JSON payload from Elastic: %s", err)
+		return result.Err(500, "INTERNAL_SERVER_ERROR", "Unknown service error has occurred.")
+	}
+
+	since := time.Since(t).Milliseconds()
+	took := d["took"].(float64)
+	hits := d["hits"].(map[string]interface{})
+	maxScore, ok := hits["max_score"].(float64)
+	if !ok {
+		maxScore = float64(0)
+	}
+
+	totalHits := hits["total"].(map[string]interface{})["value"].(float64)
+	rawHitsData, ok := hits["hits"].([]map[string]interface{})
+	if !ok {
+		rawHitsData = make([]map[string]interface{}, 0)
+	}
+
+	actualData := make([]interface{}, 0)
+	if rawHitsData != nil {
+		for _, hit := range rawHitsData {
+			// Get the source
+			source := hit["_source"]
+			actualData = append(actualData, source)
+		}
+	}
+
+	return result.Ok(map[string]interface{}{
+		"request_ms": since,
+		"took":       took,
+		"max_score":  maxScore,
+		"total_hits": totalHits,
+		"data":       actualData,
+	})
+}
+
+func (es ElasticService) SearchRaw(index string, data map[string]interface{}) *result.Result {
+	logrus.Debugf("Now searching data on index '%s'...", index)
+	logrus.Tracef("data to search => %v", data)
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(data); err != nil {
+		logrus.Errorf("Unable to encode query %v: %v", data, err)
+		return result.Err(500, "INTERNAL_SERVER_ERROR", "Unknown service error has occurred.")
+	}
+
+	t := time.Now()
+	res, err := es.client.Search(
+		es.client.Search.WithIndex(index),
+		es.client.Search.WithContext(context.Background()),
+		es.client.Search.WithBody(&buf),
+		es.client.Search.WithTrackTotalHits(true))
+
+	if err != nil {
+		logrus.Errorf("Unable to encode query %v: %v", data, err)
 		return result.Err(500, "INTERNAL_SERVER_ERROR", "Unknown service error has occurred.")
 	}
 
