@@ -38,7 +38,7 @@ jobs:
         run: go mod download && go get
 
       - name: Cache Go modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/go/pkg/mod
