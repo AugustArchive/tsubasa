@@ -1,4 +1,5 @@
-# 🐇 Tsubasa
+# 🐇 翼 Tsubasa • [![Lint on Commit](https://github.com/auguwu/tsubasa/actions/workflows/lint.yml/badge.svg)](https://github.com/auguwu/tsubasa/actions/workflows/lint.yml) [![Docker Pulls](https://img.shields.io/docker/pulls/auguwu/tsubasa?label=Docker%3A%20auguwu%2Ftsubasa&style=flat-square)](https://hub.docker.com/r/auguwu/tsubasa) [![GitHub Sponsors](https://img.shields.io/github/sponsors/auguwu?style=flat-square)](https://github.com/sponsors/auguwu)
+
 > *Tiny, and simple Elasticsearch microservice to abstract searching objects!*
 
 ## Why did you build this?
