@@ -55,6 +55,7 @@ func Start(config *internal.Config) error {
 
 	// Define middleware and routing here
 	router.Use(chim.RealIP)
+	router.Use(chim.GetHead)
 	router.Use(middleware.Logging)
 	router.Use(middleware.Headers)
 	router.Use(middleware.BasicAuth)

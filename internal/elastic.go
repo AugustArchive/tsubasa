@@ -65,6 +65,8 @@ func DetermineMatchType(s string) MatchType {
 }
 
 type ElasticService struct {
+	ServerVersion string
+
 	indexes []string
 	client  *elasticsearch.Client
 }
@@ -135,7 +137,7 @@ func NewElasticService(config *Config) (*ElasticService, error) {
 	version := data["version"].(map[string]interface{})["number"].(string)
 	logrus.Debugf("Server: %s | Client: %s", version, elasticsearch.Version)
 
-	service := &ElasticService{config.Elastic.Indexes, client}
+	service := &ElasticService{version, config.Elastic.Indexes, client}
 	service.createIndexes()
 
 	return service, nil

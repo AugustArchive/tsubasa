@@ -16,17 +16,37 @@
 package routes
 
 import (
+	"floofy.dev/tsubasa/internal"
 	"floofy.dev/tsubasa/internal/result"
 	"floofy.dev/tsubasa/util"
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 )
 
 func NewMainRouter() chi.Router {
 	r := chi.NewRouter()
+	elastic := internal.GlobalContainer.Elastic
+
 	r.Get("/", func(w http.ResponseWriter, req *http.Request) {
-		util.WriteJson(w, 200, result.Ok(map[string]interface{}{
+		util.WriteJson(w, 200, result.Ok(map[string]any{
 			"hello": "world",
+		}))
+	})
+
+	r.Get("/info", func(w http.ResponseWriter, req *http.Request) {
+		healthy, ping := elastic.Available()
+
+		util.WriteJson(w, 200, result.Ok(map[string]any{
+			"version":    internal.Version,
+			"commit_sha": internal.CommitSHA,
+			"build_date": internal.BuildDate,
+			"elastic": map[string]any{
+				"healthy":        healthy,
+				"ping":           ping,
+				"server_version": elastic.ServerVersion,
+				"client_version": elasticsearch.Version,
+			},
 		}))
 	})
 
