@@ -28,7 +28,7 @@ RUN make deps
 RUN make build
 
 # Now, this is the final stage! :D
-FROM alpine:3.15
+FROM alpine:3.16
 
 # install needed dependencies
 RUN apk update && apk add --no-cache bash musl-dev libc-dev gcompat
