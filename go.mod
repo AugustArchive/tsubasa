@@ -3,7 +3,7 @@ module floofy.dev/tsubasa
 go 1.18
 
 require (
-	github.com/elastic/go-elasticsearch/v8 v8.2.0
+	github.com/elastic/go-elasticsearch/v8 v8.3.0
 	github.com/getsentry/sentry-go v0.13.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/pelletier/go-toml/v2 v2.0.2
